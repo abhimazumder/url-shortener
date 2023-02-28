@@ -7,7 +7,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
     <title>URL Shortener</title>
   </head>
-  <body style="background-color:#2F2F42;text-align:center">
+  <body style="background-color:#2F2F42;text-align:center;font-family:monospace">
     <div class = "container my-4" style="color:whitesmoke">
       <div class="jumbotron jumbotron-fluid">
         <div class="container">
@@ -21,22 +21,22 @@
           <button class="btn btn-outline-light" type="submit" id="submit">Submit</button>
         </div>
       </form>
-      <table class="table table-sm table-responsive table-borderless table-hover" style="color:whitesmoke">
+      <table class="table table-responsive table-borderless table-hover" style="color:whitesmoke">
         <thead>
           <tr>
-            <th>Long URL</th>
-            <th>Short URL</th>
-            <th>Clicks</th>
+            <th class="th-lg">Long URL</th>
+            <th class="th-sm">Short URL</th>
+            <th class="th-sm">Clicks</th>
           </tr>
         </thead>
         <tbody>
           <% allURLs.forEach(URL => { %>
             <tr>
               <td>
-                <a href="<%= URL.longURL %>" style="color:whitesmoke"><%= URL.longURL %></a>
+                <a href="<%= URL.longURL %>" target="_blank" style="color:whitesmoke"><%= URL.longURL %></a>
               </td>
               <td>
-                <a href="<%= URL.shortURL %>" style="color:whitesmoke"><%= URL.shortURL %></a>
+                <a href="<%= URL.shortURL %>" target="_blank" style="color:whitesmoke"><%= URL.shortURL %></a>
               </td>
               <td style="color:whitesmoke"><%= URL.clicks %></td>
             </tr>

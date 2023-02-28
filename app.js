@@ -3,10 +3,12 @@ const app = express();
 const bodyParser = require('body-parser');
 const shortId = require('shortid');
 const ShortURL = require('./models/ShortURL');
-
 const mongoose = require('mongoose');
+
+const mongoURL = 'mongodb+srv://abhishek_mazumder:' + process.env.ATLAS_PASSWORD +'@url-shortener.qjwovzs.mongodb.net/?retryWrites=true&w=majority';
+
 mongoose.set('strictQuery', false);
-mongoose.connect('mongodb+srv://abhishek_mazumder:Asdfg09876@url-shortener.qjwovzs.mongodb.net/?retryWrites=true&w=majority', {
+mongoose.connect(mongoURL, {
     useNewUrlParser : true,
     useUnifiedTopology : true
 })
@@ -23,7 +25,6 @@ app.get('/', async (req, res, next) => {
         res.render('index', {allURLs : allURLs});
     })
     .catch(error => {
-        console.log(error);
         error.status = 500;
         error.message = "Internal Server Error";
         next(error);
@@ -34,15 +35,44 @@ app.get('/:shortURL', async (req, res, next) => {
     ShortURL.findOne({shortURL : req.params.shortURL})
     .exec()
     .then(URL => {
+        if(URL == null){
+            return res.render('error', {error : {
+                status : 404,
+                message : "Not Found"
+            }});
+        }
         URL.clicks++;
         URL.save();
         res.redirect(URL.longURL);
     })
     .catch(error => {
-        console.log(error);
-        next();
+        res.render('error', {error : {
+            status : 500,
+            message : "Internal Server Error"
+        }});
     })
 })
+
+app.delete('/:shortURL', (req, res, next) => {
+    ShortURL.deleteOne({shortURL : req.params.shortURL})
+    .exec()
+    .then(result => {
+        if(result.deletedCount == 0){
+            return res.render('error', {error : {
+                    status : 404,
+                    message : "Not Found"
+                }
+            });
+        }
+        res.redirect('/');
+    })
+    .catch(error => {
+        res.render('error', {error : {
+            status : 500,
+            message : "Internal Server Error"
+        }});
+    })
+});
 
 app.post('/shortenURL', async (req, res, next) => {
     const shortURL = new ShortURL({
@@ -53,17 +83,15 @@ app.post('/shortenURL', async (req, res, next) => {
     await shortURL
     .save()
     .then(result => {
-        console.log(result);
         res.redirect('/');
     })
     .catch(error => {
-        console.log(error);
         res.render('error', {error : {
-            status : 500,
-            message : "Internal Server Error"
+            status : 422,
+            message : error.message
         }})
     })
-})
+});
 
 app.use((req, res, next) => {
     const error = new Error("Not Found");
