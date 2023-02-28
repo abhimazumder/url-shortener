@@ -1,0 +1,6 @@
+{
+    "env": {
+        "PORT" : "3001",
+        "ATLAS_PASSWORD" : "Asdfg09876"
+    }
+}
